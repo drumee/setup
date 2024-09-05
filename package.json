@@ -4,8 +4,8 @@
   "description": "Drumee Common Setup Utilities",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "drumee-server-devel"
+    "dev": "drumee-server-devel",
+    "release": "git push && npm publish --access public && npm version patch"
   },
   "repository": {
     "type": "git",
