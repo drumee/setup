@@ -27,7 +27,7 @@ mkdir -p /var/log/drumee/
 log=/var/log/drumee/seeds.log
 date > $log
 
-SEEDS_FILE=/var/drumee/setup/data/seeds.tgz
+SEEDS_FILE=/var/lib/drumee/setup/data/seeds.tgz
 echo Extracting schemas seeds
 tar -xf $SEEDS_FILE --checkpoint=.50 --one-top-level=seeds
 echo

@@ -1,20 +1,15 @@
 #!/bin/sh
-#set -e
+set -e
+
+mkdir -p /var/tmp/drumee
+env_file=/var/tmp/drumee/env.sh
+echo "# env file automatically generated " > $env_file
 
 # Source debconf library
 . /usr/share/debconf/confmodule
 
 echo "Installing Drumee from Debian Packages"
 script_dir=$(dirname $(readlink -f $0))
-
-. ${script_dir}/functions
-
-db_input high drumee/reinstall || true
-db_go
-db_get drumee/reinstall
-if [ $RET = "quit" ]; then
-  exit 0
-fi
 
 db_input high drumee/description || true
 
@@ -31,7 +26,7 @@ do
   db_get drumee/domain
   is_valid=$(echo $RET | grep -E "$dom_pattern")
 done
-export DRUMEE_DOMAIN_NAME=$RET
+echo export DRUMEE_DOMAIN_NAME=$RET >> $env_file
 
 if [ "$DRUMEE_DOMAIN_NAME" = "local" ]; then
   db_input high drumee/local_mode || true
@@ -58,7 +53,7 @@ do
   db_get drumee/public_ip4
   is_valid=$(echo $RET | grep -E "$ip4_pattern")
 done
-export PUBLIC_IP4=$RET
+echo export PUBLIC_IP4=$RET >> $env_file
 
 # PUBLIC_IP6
 ip6_pattern="^([[:xdigit:]]{1,4})(:[[:xdigit:]]{0,4})*$"
@@ -73,7 +68,7 @@ do
   db_get drumee/public_ip6
   is_valid=$(echo $RET | grep -E "$ip6_pattern")
 done
-export PUBLIC_IP6=$RET
+echo export PUBLIC_IP6=$RET >> $env_file
 
 # ADMIN_EMAIL
 email_pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$"
@@ -88,14 +83,15 @@ do
   db_get drumee/admin_email
   is_valid=$(echo $RET | grep -E "$email_pattern")
 done
-export ADMIN_EMAIL=$RET
+ADMIN_EMAIL=$RET
+echo export ADMIN_EMAIL=$RET >> $env_file
 
-# ACME_EMAIL_ACCOUNT
+# ACME_EMAIL_ACCOUNTenv_file
 db_input high drumee/acme_email_account || true
 db_go
 db_get drumee/acme_email_account
 if [ "$RET" = "" ]; then
-  export ACME_EMAIL_ACCOUNT=$ADMIN_EMAIL
+  echo export ACME_EMAIL_ACCOUNT=$ADMIN_EMAIL >> $env_file
 else 
   is_valid=$(echo $RET | grep -E "$email_pattern")
   while [ "$is_valid" = "" ]
@@ -105,7 +101,7 @@ else
   db_get drumee/acme_email_account
     is_valid=$(echo $RET | grep -E "$email_pattern")
   done
-  export ACME_EMAIL_ACCOUNT=$RET
+  echo export ACME_EMAIL_ACCOUNT=$RET >> $env_file
 fi
 
 # DRUMEE_DB_DIR
@@ -121,7 +117,7 @@ do
   db_get drumee/db_dir
   is_valid=$(echo $RET | grep -E "$dir_pattern")
 done
-export DRUMEE_DB_DIR=$RET
+echo export DRUMEE_DB_DIR=$RET >> $env_file
 
 # DRUMEE_DATA_DIR
 db_input high drumee/data_dir || true
@@ -135,13 +131,14 @@ do
   db_get drumee/data_dir
   is_valid=$(echo $RET | grep -E "$dir_pattern")
 done
-export DRUMEE_DATA_DIR=$RET
+echo export DRUMEE_DATA_DIR=$RET >> $env_file
 
 # BACKUP_LOCATION
 db_input high drumee/backup_location || true
 db_go
 db_get drumee/backup_location
 
-export BACKUP_LOCATION=$RET
+echo export BACKUP_LOCATION=$RET >> $env_file
 
+echo 137:DRUMEE_DOMAIN_NAME=$DRUMEE_DOMAIN_NAME
 db_stop

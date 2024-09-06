@@ -1,12 +1,10 @@
 #!/bin/bash
 
-
 set -e
 echo "Configuring Drumee Infrastructure"
-script_dir=$(dirname $(readlink -f $0))
-base=$(dirname $script_dir)
+base=$(dirname $(readlink -f $0))
 
-$script_dir/init/mail
+$base/init/mail.bash
 
 node $base/infra/index.js
 
@@ -21,8 +19,8 @@ if [ -d /etc/cron.d/drumee ]; then
 fi 
 
 
-source $infra_helper/utils/misc
-source $infra_helper/utils/jitsi
+source $base/utils/misc.sh
+source $base/utils/jitsi.bash
 
 install_jitsi
 
@@ -49,8 +47,8 @@ protect_dir $DRUMEE_SERVER_HOME
 protect_dir $DRUMEE_EXPORT_DIR
 protect_dir $DRUMEE_IMPORT_DIR
 
-$infra_helper/init/named
-$infra_helper/init/acme
+$base/init/named.bash
+$base/init/acme.bash
 
 clean_vendor_files
 setup_dirs

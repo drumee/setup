@@ -61,17 +61,3 @@ protect_dir () {
     chmod -R u+rwx $dir
   fi
 }
-
-check_installation() {
-  if [ -f /etc/drumee/drumee.sh ]; then
-    source /etc/drumee/drumee.sh 
-    yp=$(mysql yp -e  "select main_domaissn() mydomain");
-    if [ "$yp" = "" ]; then
-      RET=maiden
-    else 
-      RET=exists
-    fi
-  else
-    RET=maiden
-  fi
-}

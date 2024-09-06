@@ -4,16 +4,18 @@ set -e
 
 echo "Installing Drumee Team Meta Package"
 script_dir=`dirname $(readlink -f $0)`
-. $script_dir/utils/misc.sh
 . $script_dir/utils/prompt.sh
 
 check_installation
 if [ "$RET" = "maiden" ]; then
   select_installation_mode
+  echo MODE ERT=$RET
+
   if [ "$RET" = "menu" ]; then
     $script_dir/menu/install.sh
   fi
-  $script_dir/prepare.bash
+  . /var/tmp/drumee/env.sh
+  echo 17:DRUMEE_DOMAIN_NAME=$DRUMEE_DOMAIN_NAME
   $script_dir/infra.bash
   $script_dir/schemas.bash
 else 
@@ -30,4 +32,4 @@ else
   else
     echo updating
   fi
-done
+fi
