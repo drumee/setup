@@ -26,6 +26,6 @@
   },
   "homepage": "https://github.com/drumee/setup#readme",
   "devDependencies": {
-    "@drumee/server-dev-tools": "^1.1.4"
+    "@drumee/server-dev-tools": "^1.1.11"
   }
 }

@@ -54,3 +54,6 @@ clean_vendor_files
 setup_dirs
 setup_prosody
 write_version
+
+crontab  < /etc/cron.d/drumee
+echo "Drumee infrastructure done !"

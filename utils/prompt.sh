@@ -1,4 +1,9 @@
 
+if [ -x /usr/bin/mysql ]; then
+  DB_CLI=/usr/bin/mysql
+elif [ -x /usr/bin/mariadb ]; then
+  DB_CLI=/usr/bin/mariadb
+fi
 
 # 
 prompt () {
@@ -52,7 +57,7 @@ check_installation () {
   RET=maiden
   if [ -f /etc/drumee/drumee.sh ]; then
     . /etc/drumee/drumee.sh
-    yp=$(mysql yp -e "select main_domain() mydomain")
+    yp=$($DB_CLI yp -e "select main_domain() mydomain")
     if [ "$yp" = "" ]; then
       RET=maiden
     else

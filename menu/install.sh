@@ -137,8 +137,12 @@ echo export DRUMEE_DATA_DIR=$RET >> $env_file
 db_input high drumee/backup_location || true
 db_go
 db_get drumee/backup_location
-
 echo export BACKUP_LOCATION=$RET >> $env_file
 
-echo 137:DRUMEE_DOMAIN_NAME=$DRUMEE_DOMAIN_NAME
+# EXCHANGE_LOCATION
+db_input high drumee/exchange_location || true
+db_go
+db_get drumee/exchange_location
+echo export EXCHANGE_LOCATION=$RET >> $env_file
+
 db_stop

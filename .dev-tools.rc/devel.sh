@@ -1,2 +1,2 @@
-export DEST_DIR=$HOME/debian/drumee-common/var/lib/drumee/setup
+export DEST_DIR=$HOME/github/debian/setup
 export AFTER_SYNC=build.sh

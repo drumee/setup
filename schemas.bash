@@ -36,7 +36,6 @@ mariabackup --copy-back --target-dir=$script_dir/seeds >> ${log} 2>>${log}
 
 echo Preparing db data dir
 chown -R mysql:mysql $run_dir
-chmod -R go-rwx $run_dir
 service mariadb start
 
 mariadb -e "CREATE OR REPLACE USER '$DRUMEE_SYSTEM_USER'@'localhost' IDENTIFIED VIA unix_socket"

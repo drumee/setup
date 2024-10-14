@@ -1,0 +1,20 @@
+#!/bin/bash
+source /etc/drumee/drumee.sh
+if [[ "$DRUMEE_STORAGE_BACKUP" =~ ^.+:/.+ ]]; then
+  rsync -ar $DRUMEE_DATA_DIR/mfs $DRUMEE_STORAGE_BACKUP
+  rsync -ar /var/mail $DRUMEE_STORAGE_BACKUP
+  for i in bind drumee jitsi nginx prosod; do
+    rsync -ar /etc/$i $DRUMEE_STORAGE_BACKUP/etc/
+  done
+  exit 0
+fi
+
+if [ -d "$DRUMEE_STORAGE_BACKUP" ]; then
+  base=$DRUMEE_STORAGE_BACKUP/$DRUMEE_DOMAIN_NAME
+  mkdir -p $base/etc
+  rsync -ar $DRUMEE_DATA_DIR/mfs $base
+  rsync -ar /var/mail $base
+  for i in bind drumee jitsi nginx prosod; do
+    rsync -ar /etc/$i $base/etc/
+  done
+fi
