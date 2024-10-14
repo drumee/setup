@@ -5,28 +5,35 @@ elif [ -x /usr/bin/mariadb ]; then
   DB_CLI=/usr/bin/mariadb
 fi
 
-# 
+# name of the input
+# pattern validity check of the ipnupt value
+# toggle set validity is checked again negative pattern
 prompt () {
   name=$1
   pattern=$2
   toggle=$3
   db_input high $name || true
-  db_get $name  
-  is_valid=$(echo $RET | grep -E "$pattern")
-  if ["$toggle" = "" ]; then
-    while [ "$is_valid" = "" ]
-    do
-      db_input high $name || true
-      db_get $name
-      is_valid=$(echo $RET | grep -E "$pattern")
-    done 
-  else 
-    while [ "$is_valid" != "" ]
-    do
-      db_input high $name || true
-      db_get $name
-      is_valid=$(echo $RET | grep -E "$pattern")
-    done 
+  db_go
+  db_get $name
+  if [ "$pattern" != "" ]; then
+    is_valid=$(echo $RET | grep -E "$pattern")
+    if [ "$toggle" = "" ]; then
+      while [ "$is_valid" = "" ]
+      do
+        db_input high $name || true
+        db_go
+        db_get $name
+        is_valid=$(echo $RET | grep -E "$pattern")
+      done 
+    else 
+      while [ "$is_valid" != "" ]
+      do
+        db_input high $name || true
+        db_go
+        db_get $name
+        is_valid=$(echo $RET | grep -E "$pattern")
+      done 
+    fi
   fi
 }
 
