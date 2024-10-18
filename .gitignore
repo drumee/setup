@@ -140,5 +140,5 @@ git-status.*
 .fuse*
 build/
 t
-.dev-tools-rc/*
+.dev-tools.rc/*
 src/*

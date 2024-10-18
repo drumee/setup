@@ -4,34 +4,51 @@ if [ -x /usr/bin/mysql ]; then
 elif [ -x /usr/bin/mariadb ]; then
   DB_CLI=/usr/bin/mariadb
 fi
+debug=/var/tmp/drumee/debug.log
+
+#
+log() {
+  local message="$1"
+  local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+  echo "${timestamp}: ${message}" >> $debug
+}
+
+#
+read_response () {
+  db_input high $1 || true
+  db_go
+  db_get $1
+}
+
+# 
+handle_trap () {
+  echo trapped
+}
 
 # name of the input
 # pattern validity check of the ipnupt value
 # toggle set validity is checked again negative pattern
 prompt () {
-  name=$1
-  pattern=$2
-  toggle=$3
-  db_input high $name || true
-  db_go
-  db_get $name
+  local name=$1
+  local pattern=$2
+  local toggle=$3
+  local is_valid=
+  read_response $name
   if [ "$pattern" != "" ]; then
     is_valid=$(echo $RET | egrep -io "$pattern")
     if [ "$toggle" = "" ]; then
       while [ "$is_valid" = "" ]
       do
-        db_input high $name || true
-        db_go
-        db_get $name
+        read_response $name
         is_valid=$(echo $RET | egrep -io "$pattern")
+        sleep 1
       done 
     else 
       while [ "$is_valid" != "" ]
       do
-        db_input high $name || true
-        db_go
-        db_get $name
+        read_response $name
         is_valid=$(echo $RET | egrep -io "$pattern")
+        sleep 1
       done 
     fi
   fi

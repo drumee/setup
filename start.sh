@@ -6,18 +6,27 @@ echo "Installing Drumee Team Meta Package"
 script_dir=`dirname $(readlink -f $0)`
 . $script_dir/utils/prompt.sh
 
-check_installation
-if [ "$RET" = "maiden" ]; then
+do_install () {
   select_installation_mode
-  echo "MODE 12/B ERT=$RET"
-
   if [ "$RET" = "menu" ]; then
     $script_dir/menu/install.sh
   fi
-  . /var/tmp/drumee/env.sh
-  echo 17:DRUMEE_DOMAIN_NAME=$DRUMEE_DOMAIN_NAME
-  # $script_dir/infra.bash
-  # $script_dir/schemas.bash
+  # env.sh may be updated by install or another automation
+  if [ -f  /var/tmp/drumee/env.sh ]; then
+    . /var/tmp/drumee/env.sh
+    echo 17:DRUMEE_DOMAIN_NAME=$DRUMEE_DOMAIN_NAME
+    $script_dir/infra/bin/install
+    $script_dir/schemas/bin/install
+  else
+    echo failed to configure
+    exit 1
+  fi
+  exit 0
+}
+
+check_installation
+if [ "$RET" = "maiden" ]; then
+  do_install
 else 
   should_reinstall
   if [ "$RET" = "remove" ]; then
@@ -25,11 +34,8 @@ else
     service mariadb stop
     echo rm -rf $DRUMEE_DB_DIR
     echo rm -rf $DRUMEE_DATA_DIR
-    $script_dir/menu/install.sh
-    $script_dir/prepare.bash
-    $script_dir/infra.bash
-    $script_dir/schemas.bash
+    do_install
   else
-    echo updating
+    echo run dpkg-reconigure drumee-infra
   fi
 fi

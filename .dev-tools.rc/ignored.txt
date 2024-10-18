@@ -1,4 +1,0 @@
-.git/
-*.swp
-.git
-.dev-tools.rc/

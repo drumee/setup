@@ -1,18 +1,19 @@
 #!/bin/sh
 set +e
-echo "Installing Drumee from Debian Packages"
+#echo "Installing Drumee from Debian Packages"
 script_dir=$(dirname $(readlink -f $0))
 base=$(dirname $script_dir)
 
 mkdir -p /var/tmp/drumee
 env_file=/var/tmp/drumee/env.sh
+debug=/var/tmp/drumee/debug.log
 echo "# env file automatically generated " > $env_file
 
 # Source debconf library
-. /usr/share/debconf/confmodule
 . $base/utils/prompt.sh
-
-prompt drumee-infra/description
+. /usr/share/debconf/confmodule
+trap handle_trap INT
+prompt drumee/description
 echo export DRUMEE_DESCRIPTION=$RET >> $env_file
 
 prompt drumee-infra/domain "^([a-z0-9_\-]+)(\.[a-z0-9_\-]+)*$"
@@ -50,11 +51,11 @@ echo export PUBLIC_IP6=$PUBLIC_IP6 >> $env_file
 
 # Emails
 email_pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$"
+
 prompt drumee-infra/admin_email $email_pattern
 ADMIN_EMAIL=$RET
 echo export ADMIN_EMAIL=$ADMIN_EMAIL >> $env_file
 
-db_set drumee-infra/acme_email $ADMIN_EMAIL
 prompt drumee-infra/acme_email $email_pattern
 ACME_EMAIL_ACCOUNT=$RET
 echo export ACME_EMAIL_ACCOUNT=$ACME_EMAIL_ACCOUNT >> $env_file
@@ -84,3 +85,4 @@ fi
 echo cat $env_file
 
 db_stop
+exit 0
